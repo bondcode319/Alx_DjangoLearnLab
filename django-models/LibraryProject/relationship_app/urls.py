@@ -63,4 +63,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
     path('register/', views.register_view, name='register'),
     path('profile/', views.profile_view, name='profile'),
+    
+    # Admin URLs
+    path('admin-dashboard/', views.admin_view, name='admin_dashboard'),
 ]
