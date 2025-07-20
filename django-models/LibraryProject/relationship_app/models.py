@@ -76,9 +76,29 @@ class UserProfile(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Member')
+    bio = models.TextField(max_length=500, blank=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    phone_number = models.CharField(max_length=15, blank=True)
+    address = models.TextField(max_length=200, blank=True)
+    profile_picture = models.URLField(blank=True)
+    
+    class Meta:
+        permissions = [
+            ("can_view_member_details", "Can view member details"),
+            ("can_edit_member_details", "Can edit member details"),
+        ]
     
     def __str__(self):
         return f"{self.user.username} - {self.role}"
+        
+    def is_admin(self):
+        return self.role == 'Admin'
+        
+    def is_librarian(self):
+        return self.role == 'Librarian'
+        
+    def is_member(self):
+        return self.role == 'Member'
 
 class Author(models.Model):
     name = models.CharField(max_length=100)

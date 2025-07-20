@@ -7,11 +7,23 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Register</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
+    <div class="container">
+        <h1>Register</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="user-info">
+                <h2>Account Information</h2>
+                {{ user_form.as_p }}
+            </div>
+            
+            <div class="profile-info">
+                <h2>Profile Information</h2>
+                {{ profile_form.as_p }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
 </body>
 </html>

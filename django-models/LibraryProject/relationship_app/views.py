@@ -41,7 +41,8 @@
     # relationship_app/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import UserCreationForm
@@ -412,16 +413,57 @@ def author_detail(request, pk):
 # User registration view
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from .forms import ExtendedUserCreationForm, UserProfileForm
+
 def register_view(request):
     """
-    Handle user registration
+    Handle user registration with profile creation
     """
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+        user_form = ExtendedUserCreationForm(request.POST)
+        profile_form = UserProfileForm(request.POST)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            
+            # Create UserProfile
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            
+            # Log the user in
             login(request, user)
+            messages.success(request, 'Registration successful!')
             return redirect('list_books')
     else:
-        form = UserCreationForm()
-    return render(request, 'relationship_app/register.html', {'form': form})
+        user_form = ExtendedUserCreationForm()
+        profile_form = UserProfileForm()
+    
+    return render(request, 'relationship_app/register.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
+
+@login_required
+def profile_view(request):
+    """
+    View and edit user profile
+    """
+    try:
+        profile = request.user.userprofile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=request.user)
+    
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST, instance=profile)
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+    else:
+        profile_form = UserProfileForm(instance=profile)
+    
+    return render(request, 'relationship_app/profile.html', {
+        'profile_form': profile_form,
+        'profile': profile
+    })
