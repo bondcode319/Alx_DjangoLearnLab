@@ -160,9 +160,15 @@ def add_book(request):
 # Update view with permission check
 @login_required
 @permission_required('relationship_app.can_change_book', raise_exception=True)
-def edit_book(request, pk):
+def edit_book(request):
     """Edit an existing book - requires can_change_book permission"""
-    book = get_object_or_404(Book, pk=pk)
+    # Get book ID from GET or POST parameters
+    book_id = request.GET.get('id') or request.POST.get('book_id')
+    if not book_id:
+        messages.error(request, 'Book ID is required to edit a book.')
+        return redirect('list_books')
+    
+    book = get_object_or_404(Book, pk=book_id)
     
     if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
@@ -181,9 +187,15 @@ def edit_book(request, pk):
 # Delete view with permission check
 @login_required
 @permission_required('relationship_app.can_delete_book', raise_exception=True)
-def delete_book(request, pk):
+def delete_book(request):
     """Delete a book - requires can_delete_book permission"""
-    book = get_object_or_404(Book, pk=pk)
+    # Get book ID from GET or POST parameters
+    book_id = request.GET.get('id') or request.POST.get('book_id')
+    if not book_id:
+        messages.error(request, 'Book ID is required to delete a book.')
+        return redirect('list_books')
+    
+    book = get_object_or_404(Book, pk=book_id)
     
     if request.method == 'POST':
         book_title = book.title
