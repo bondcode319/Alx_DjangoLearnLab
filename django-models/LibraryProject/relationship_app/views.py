@@ -1,31 +1,8 @@
-# from django.shortcuts import render
-# from .models import Book
-# # Create your views here.
-
-# def book_list(request):
-#     """
-#     View to list all books.
-#     """
-#     books = Book.objects.all()
-#     return render(request, 'relationship_app/book_list.html', {'books': books, 'title': 'Book List', 'author': 'Author Name'})
-
-# class BookDetailView:
-#     """
-#     View to display details of a specific book.
-#     """
-#     def get(self, request, book_id):
-#         try:
-#             book = Book.objects.get(id=book_id)
-#             return render(request, 'relationship_app/book_detail.html', {'book': book, 'title': book.title, 'author': book.author.name})
-#         except Book.DoesNotExist:
-#             return render(request, 'relationship_app/book_not_found.html', {'title': 'Book Not Found'})
-        
-        
 # relationship_app/views.py
 
 from django.shortcuts import render, get_object_or_404
-from django.views.generic.detail import  DetailView
-from .models import Book,  Author, Librarian
+from django.views.generic import ListView, DetailView
+from .models import Book, Author, Librarian
 from .models import Library
 
 
