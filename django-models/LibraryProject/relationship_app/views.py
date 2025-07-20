@@ -418,6 +418,77 @@ def library_detail(request, pk):
     library = get_object_or_404(Library, pk=pk)
     return render(request, 'relationship_app/library_detail.html', {'library': library})
 
+@login_required
+@librarian_required
+def library_books(request, library_id):
+    """Display and manage books in a specific library"""
+    library = get_object_or_404(Library, pk=library_id)
+    
+    # Check if the librarian is assigned to this library
+    try:
+        librarian = Librarian.objects.get(user=request.user, library=library)
+    except Librarian.DoesNotExist:
+        messages.error(request, "You don't have permission to manage this library's books.")
+        return redirect('list_books')
+    
+    books = library.books.select_related('author').all()
+    available_books = Book.objects.exclude(library=library)
+    
+    context = {
+        'library': library,
+        'books': books,
+        'available_books': available_books,
+    }
+    return render(request, 'relationship_app/library_books.html', context)
+
+@login_required
+@librarian_required
+def add_book_to_library(request, library_id):
+    """Add an existing book to a library"""
+    library = get_object_or_404(Library, pk=library_id)
+    
+    # Check if the librarian is assigned to this library
+    try:
+        librarian = Librarian.objects.get(user=request.user, library=library)
+    except Librarian.DoesNotExist:
+        messages.error(request, "You don't have permission to manage this library's books.")
+        return redirect('list_books')
+    
+    if request.method == 'POST':
+        book_id = request.POST.get('book_id')
+        if book_id:
+            book = get_object_or_404(Book, pk=book_id)
+            library.books.add(book)
+            messages.success(request, f'"{book.title}" has been added to {library.name}')
+        return redirect('library_books', library_id=library.id)
+    
+    # Get books not in this library
+    available_books = Book.objects.exclude(library=library)
+    return render(request, 'relationship_app/add_book_to_library.html', {
+        'library': library,
+        'available_books': available_books,
+    })
+
+@login_required
+@librarian_required
+def remove_book_from_library(request, library_id, book_id):
+    """Remove a book from a library"""
+    library = get_object_or_404(Library, pk=library_id)
+    
+    # Check if the librarian is assigned to this library
+    try:
+        librarian = Librarian.objects.get(user=request.user, library=library)
+    except Librarian.DoesNotExist:
+        messages.error(request, "You don't have permission to manage this library's books.")
+        return redirect('list_books')
+    
+    book = get_object_or_404(Book, pk=book_id)
+    if request.method == 'POST':
+        library.books.remove(book)
+        messages.success(request, f'"{book.title}" has been removed from {library.name}')
+    
+    return redirect('library_books', library_id=library.id)
+
 
 def author_detail(request, pk):
     """Display author details"""

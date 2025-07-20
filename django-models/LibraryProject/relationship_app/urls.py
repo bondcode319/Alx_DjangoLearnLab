@@ -44,12 +44,17 @@ from django.contrib.auth.views import LoginView, LogoutView
 urlpatterns = [
     # Book listing and detail views (no special permissions required)
     path('books/', views.list_books, name='list_books'),
-    path('book/<int:pk>/', views.book_detail, name='book_detail'),
+    path('books/<int:pk>/', views.book_detail, name='book_detail'),
     
-    # Secured book management views with permission requirements
-    path('book/add/', views.add_book, name='add_book'),  # Requires can_add_book permission
-    path('book/<int:pk>/edit/', views.edit_book, name='edit_book'),  # Requires can_change_book permission
-    path('book/<int:pk>/delete/', views.delete_book, name='delete_book'),  # Requires can_delete_book permission
+    # Book management - requires appropriate permissions
+    path('books/add/', views.add_book, name='add_book'),  # Requires can_add_book permission
+    path('books/<int:pk>/edit/', views.edit_book, name='edit_book'),  # Requires can_change_book permission
+    path('books/<int:pk>/delete/', views.delete_book, name='delete_book'),  # Requires can_delete_book permission
+    
+    # Library-specific book management
+    path('library/<int:library_id>/books/add/', views.add_book_to_library, name='add_book_to_library'),
+    path('library/<int:library_id>/books/remove/<int:book_id>/', views.remove_book_from_library, name='remove_book_from_library'),
+    path('library/<int:library_id>/books/', views.library_books, name='library_books'),
     
     # Alternative pattern for the manage_book view (optional)
     # Removed due to path converter incompatibility and view signature issues
