@@ -84,7 +84,7 @@ def retrieve_librarian_for_library(library_name):
         library = Library.objects.get(name=library_name)
         
         # Get the librarian using the correct relationship
-        librarian = Librarian.objects.filter(library=library).first()
+        librarian = Librarian.objects.get(library=library)
         if librarian:
             print(f"Librarian for {library_name} Library: {librarian.name}")
             return librarian
