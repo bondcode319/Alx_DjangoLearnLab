@@ -264,6 +264,20 @@ def admin_required(view_func):
     actual_decorator = user_passes_test(check_admin)
     return actual_decorator(view_func)
 
+# Custom decorator to check if user has Librarian role
+def librarian_required(view_func):
+    """Decorator to check if user has Librarian role"""
+    def check_librarian(user):
+        if user.is_authenticated:
+            try:
+                return user.userprofile.role == 'Librarian'
+            except UserProfile.DoesNotExist:
+                return False
+        return False
+    
+    actual_decorator = user_passes_test(check_librarian)
+    return actual_decorator(view_func)
+
 # Admin-only view
 @login_required
 @admin_required
@@ -409,6 +423,34 @@ def author_detail(request, pk):
     """Display author details"""
     author = get_object_or_404(Author, pk=pk)
     return render(request, 'relationship_app/author_detail.html', {'author': author})
+
+@login_required
+@librarian_required
+def librarian_dashboard(request):
+    """
+    Librarian dashboard - only accessible by users with Librarian role
+    Shows library-specific information and management options
+    """
+    # Get the librarian's associated library
+    try:
+        librarian = Librarian.objects.get(user=request.user)
+        library = librarian.library
+        
+        # Get library statistics
+        total_books = library.books.count()
+        books = library.books.select_related('author').all()
+        
+        context = {
+            'library': library,
+            'total_books': total_books,
+            'books': books,
+            'librarian': librarian,
+        }
+        
+        return render(request, 'relationship_app/librarian_dashboard.html', context)
+    except Librarian.DoesNotExist:
+        messages.error(request, 'You need to be assigned to a library first.')
+        return redirect('profile')
 
 # User registration view
 from django.contrib.auth.forms import UserCreationForm

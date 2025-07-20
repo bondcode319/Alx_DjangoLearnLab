@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Librarian Dashboard</h1>
+    <div class="library-info">
+        <h2>{{ library.name }}</h2>
+        <p>Librarian: {{ librarian.user.get_full_name|default:librarian.user.username }}</p>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>Library Statistics</h3>
+            <p>Total Books: {{ total_books }}</p>
+        </div>
+    </div>
+
+    <div class="book-management">
+        <h2>Book Management</h2>
+        <div class="action-buttons">
+            <a href="{% url 'add_book' %}" class="btn btn-primary">Add New Book</a>
+            <a href="{% url 'list_books' %}" class="btn btn-secondary">View All Books</a>
+        </div>
+
+        <div class="book-list">
+            <h3>Books in {{ library.name }}</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>ISBN</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author.name }}</td>
+                        <td>{{ book.isbn }}</td>
+                        <td>
+                            <a href="{% url 'book_detail' book.pk %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'edit_book' %}?id={{ book.pk }}" class="btn btn-sm btn-warning">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No books in the library yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .library-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+    
+    .stat-card {
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .action-buttons {
+        margin: 20px 0;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: white;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+    }
+    
+    .btn-info {
+        background: #17a2b8;
+    }
+    
+    .btn-warning {
+        background: #ffc107;
+        color: #000;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.875rem;
+    }
+    
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    .table th,
+    .table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .table th {
+        background: #f8f9fa;
+        text-align: left;
+    }
+</style>
+{% endblock %}

@@ -66,4 +66,7 @@ urlpatterns = [
     
     # Admin URLs
     path('admin-dashboard/', views.admin_view, name='admin_dashboard'),
+    
+    # Librarian URLs
+    path('librarian-dashboard/', views.librarian_dashboard, name='librarian_dashboard'),
 ]
