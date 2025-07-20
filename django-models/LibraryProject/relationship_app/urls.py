@@ -36,8 +36,10 @@
 #     path('register/', views.register_view, name='register'),
 # ]
 
+
 from django.urls import path
 from . import views
+from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     # Book listing and detail views (no special permissions required)
@@ -50,10 +52,14 @@ urlpatterns = [
     path('book/<int:pk>/delete/', views.delete_book, name='delete_book'),  # Requires can_delete_book permission
     
     # Alternative pattern for the manage_book view (optional)
-    path('book/manage/<str:action>/', views.manage_book, name='manage_book'),
-    path('book/manage/<str:action>/<int:pk>/', views.manage_book, name='manage_book_with_id'),
+    # Removed due to path converter incompatibility and view signature issues
     
     # Library and Author views
     path('library/<int:pk>/', views.library_detail, name='library_detail'),
     path('author/<int:pk>/', views.author_detail, name='author_detail'),
+
+    # Authentication URLs
+    path('login/', LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
+    path('logout/', LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
+    path('register/', views.register_view, name='register'),
 ]

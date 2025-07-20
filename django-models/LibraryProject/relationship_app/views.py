@@ -403,7 +403,25 @@ def library_detail(request, pk):
     library = get_object_or_404(Library, pk=pk)
     return render(request, 'relationship_app/library_detail.html', {'library': library})
 
+
 def author_detail(request, pk):
     """Display author details"""
     author = get_object_or_404(Author, pk=pk)
     return render(request, 'relationship_app/author_detail.html', {'author': author})
+
+# User registration view
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+def register_view(request):
+    """
+    Handle user registration
+    """
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('list_books')
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
