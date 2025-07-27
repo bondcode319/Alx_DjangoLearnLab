@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Add Book to {{ library.name }}</h1>
+    
+    {% if available_books %}
+    <form method="post" class="add-book-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="book_id">Select a Book:</label>
+            <select name="book_id" id="book_id" class="form-control" required>
+                <option value="">-- Select a Book --</option>
+                {% for book in available_books %}
+                <option value="{{ book.id }}">{{ book.title }} by {{ book.author.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add to Library</button>
+        <a href="{% url 'library_books' library.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+    {% else %}
+    <p>No books available to add. All books are already in this library.</p>
+    <p><a href="{% url 'add_book' %}" class="btn btn-primary">Create New Book</a></p>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+    }
+</style>
+{% endblock %}
