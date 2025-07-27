@@ -27,14 +27,6 @@ class CustomUserManager(BaseUserManager):
             
         return self.create_user(username, email, password, **extra_fields)
     
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(blank=True, null=True)
-    profile_photo = models.URLField(blank=True)
-    
-    objects = CustomUserManager()
-
-    def __str__(self):
-        return self.username
 
 class UserProfile(models.Model):
     ROLE_CHOICES = [
