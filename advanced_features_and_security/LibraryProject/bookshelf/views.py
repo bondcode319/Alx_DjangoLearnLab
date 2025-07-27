@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from .models import Book
 from .forms import BookForm  # Make sure you have a BookForm defined
 from django import forms
+from .forms import ExampleForm
 
 class BookSearchForm(forms.Form):
     query = forms.CharField(max_length=100, required=False)
