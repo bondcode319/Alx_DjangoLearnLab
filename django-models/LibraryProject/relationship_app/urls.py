@@ -40,10 +40,11 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
+from .views import list_books
 
 urlpatterns = [
     # Book listing and detail views (no special permissions required)
-    path('books/', views.list_books, name='list_books'),
+    path('books/', list_books, name='list_books'),
     path('books/<int:pk>/', views.book_detail, name='book_detail'),
     
     # Book management - requires appropriate permissions
