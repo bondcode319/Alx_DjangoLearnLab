@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, AbstractUser
 from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
@@ -67,3 +67,15 @@ class Command(BaseCommand):
         admin_group.permissions.set(book_permissions)
 
         self.stdout.write(self.style.SUCCESS('Successfully set up groups and permissions'))
+        
+
+from django.contrib.auth.models import UserManager
+
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField(blank=True, null=True)
+    profile_photo = models.URLField(blank=True)
+    
+    objects = UserManager()
+
+    def __str__(self):
+        return self.username
