@@ -72,15 +72,6 @@ class Command(BaseCommand):
 
 from django.contrib.auth.models import UserManager
 
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(blank=True, null=True)
-    profile_photo = models.URLField(blank=True)
-    
-    objects = UserManager()
-
-    def __str__(self):
-        return self.username
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
         if not username:
