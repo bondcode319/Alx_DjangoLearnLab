@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  # Django REST Framework
+    'rest_framework',
+    'rest_framework.authtoken',# Django REST Framework
     'rest_framework.authtoken',  # Token authentication
     'api',
     'corsheaders',  # CORS headers for API
