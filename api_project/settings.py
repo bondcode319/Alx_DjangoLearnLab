@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',  # Django REST Framework
     'rest_framework.authtoken',  # Token authentication
     'api',
+    'corsheaders',  # CORS headers for API
 ]
 
 MIDDLEWARE = [
