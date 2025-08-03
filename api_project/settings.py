@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # Django REST Framework
     'api',
-    'rest_framework.authtoken'# Your API application
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
