@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ library.name }} - Books</h1>
+    
+    <div class="actions">
+        <a href="{% url 'add_book_to_library' library.id %}" class="btn btn-primary">Add Existing Book</a>
+        <a href="{% url 'add_book' %}" class="btn btn-secondary">Create New Book</a>
+    </div>
+    
+    <div class="books-list">
+        <h2>Current Books</h2>
+        {% if books %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author.name }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-sm btn-info">View</a>
+                        <form method="post" action="{% url 'remove_book_from_library' library.id book.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this book?')">
+                                Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No books in this library yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .actions {
+        margin: 20px 0;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: white;
+        margin-right: 10px;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+    }
+    
+    .btn-info {
+        background: #17a2b8;
+    }
+    
+    .btn-danger {
+        background: #dc3545;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.875rem;
+    }
+    
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    .table th,
+    .table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .table th {
+        background: #f8f9fa;
+        text-align: left;
+    }
+</style>
+{% endblock %}
