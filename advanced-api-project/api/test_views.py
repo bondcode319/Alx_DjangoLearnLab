@@ -42,7 +42,7 @@ class BookAPITests(APITestCase):
         serializer = BookSerializer(books, many=True)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), serializer.data)  # Use response.json() instead of data
+        self.assertEqual(response.data(), serializer.data)  # Use response.json() instead of data
 
     def test_create_book_authenticated(self):
         """Test creating a book when authenticated"""
