@@ -20,10 +20,10 @@ urlpatterns = [
     path('books/<int:pk>/', 
          BookDetailView.as_view(), 
          name='book-detail'),
-    path('books/<int:pk>/update/',
+    path('books/update/',
          BookUpdateView.as_view(),
          name='book-update'),
-    path('books/<int:pk>/delete/',
+    path('books/delete/',
          BookDeleteView.as_view(),
          name='book-delete'),
 ]
