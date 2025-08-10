@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, permissions, filters
+from django_filters import rest_framework as django_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import status
@@ -78,3 +79,30 @@ class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response({
             "message": f"Book '{instance.title}' has been deleted successfully"
         }, status=status.HTTP_204_NO_CONTENT)
+
+class BookCreateView(generics.CreateAPIView):
+    """API endpoint for creating books."""
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+class BookUpdateView(generics.UpdateAPIView):
+    """API endpoint for updating books."""
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+class BookDeleteView(generics.DestroyAPIView):
+    """API endpoint for deleting books."""
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        instance.delete()
