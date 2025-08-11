@@ -2,7 +2,6 @@ from django.urls import path
 from .views import (
     BookListView, 
     BookDetailView, 
-    BookCreateView,
     BookUpdateView,
     BookDeleteView
 )
@@ -12,10 +11,9 @@ urlpatterns = [
     path('books/', 
          BookListView.as_view(), 
          name='book-list'),
-    path('books/create/', 
-         BookCreateView.as_view(), 
-         name='book-create'),
-    
+    # path('books/create/', 
+    #      BookCreateView.as_view(), 
+    #      name='book-create'),
     # Retrieve, Update, and Delete endpoints
     path('books/<int:pk>/', 
          BookDetailView.as_view(), 
