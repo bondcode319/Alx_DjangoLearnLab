@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from rest_framework import viewsets, filters, permissions
+from rest_framework import viewsets, filters, permissions, generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from django.contrib.contenttypes.models import ContentType
 from .models import Post, Comment, Like
@@ -47,30 +48,24 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def like(self, request, pk=None):
-        post = self.get_object()
-        user = request.user
+        post = generics.get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
         
-        try:
-            like = Like.objects.create(user=user, post=post)
+        if created:
             Notification.objects.create(
                 recipient=post.author,
-                actor=user,
+                actor=request.user,
                 verb='like',
                 content_type=ContentType.objects.get_for_model(post),
                 object_id=post.id
             )
             return Response({'status': 'post liked'})
-        except IntegrityError:
-            return Response(
-                {'error': 'You already liked this post'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return Response({'status': 'post already liked'})
 
     @action(detail=True, methods=['post'])
     def unlike(self, request, pk=None):
-        post = self.get_object()
-        user = request.user
-        Like.objects.filter(user=user, post=post).delete()
+        post = generics.get_object_or_404(Post, pk=pk)
+        Like.objects.filter(user=request.user, post=post).delete()
         return Response({'status': 'post unliked'})
 
 class CommentViewSet(viewsets.ModelViewSet):
