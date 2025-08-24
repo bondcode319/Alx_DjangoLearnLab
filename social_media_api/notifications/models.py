@@ -25,10 +25,13 @@ class Notification(models.Model):
     object_id = models.PositiveIntegerField()
     target = GenericForeignKey('content_type', 'object_id')
     is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['-timestamp']),
+        ]
 
     def __str__(self):
         return f"{self.actor.username} {self.verb} {self.target}"
