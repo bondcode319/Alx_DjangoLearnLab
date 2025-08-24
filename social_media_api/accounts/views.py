@@ -45,5 +45,34 @@ class UserViewSet(viewsets.ModelViewSet):
             })
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['post'])
+    def follow(self, request, pk=None):
+        user_to_follow = self.get_object()
+        if request.user == user_to_follow:
+            return Response(
+                {'error': 'You cannot follow yourself.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        request.user.following.add(user_to_follow)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def unfollow(self, request, pk=None):
+        user_to_unfollow = self.get_object()
+        request.user.following.remove(user_to_unfollow)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def followers_list(self, request):
+        followers = request.user.followers.all()
+        serializer = self.get_serializer(followers, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def following_list(self, request):
+        following = request.user.following.all()
+        serializer = self.get_serializer(following, many=True)
+        return Response(serializer.data)
+
 
 
