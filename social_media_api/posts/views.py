@@ -35,8 +35,7 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def feed(self, request):
         following_users = request.user.following.all()
-        posts = Post.objects.filter(author__in=following_users)\
-                          .order_by('-created_at')
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
         
         page = self.paginate_queryset(posts)
         if page is not None:
