@@ -15,13 +15,16 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('followers', 'token')
 
     def get_token(self, obj):
-        token, created = Token.objects.get_or_create(user=obj)
+        # Delete existing token if it exists
+        Token.objects.filter(user=obj).delete()
+        # Create new token
+        token = Token.objects.create(user=obj)
         return token.key
 
-    def validate(self, data):
-        if data.get('password') != data.get('confirm_password'):
+    def validate(self, attrs):
+        if attrs.get('password') != attrs.get('confirm_password'):
             raise serializers.ValidationError("Passwords don't match")
-        return data
+        return attrs
 
     def create(self, validated_data):
         validated_data.pop('confirm_password')
