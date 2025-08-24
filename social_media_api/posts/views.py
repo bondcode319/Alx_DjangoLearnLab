@@ -2,13 +2,12 @@ from django.shortcuts import render
 from rest_framework import viewsets, filters, permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
-from .models import Post, Comment, Like
-from .serializers import PostSerializer, CommentSerializer
 from rest_framework.response import Response
 from django.db import IntegrityError
-from rest_framework import status
-from notifications.models import Notification
 from django.contrib.contenttypes.models import ContentType
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer
+from notifications.models import Notification
 
 class CustomPagination(PageNumberPagination):
     page_size = 10
@@ -24,7 +23,7 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'content']
@@ -38,10 +37,12 @@ class PostViewSet(viewsets.ModelViewSet):
         following_users = request.user.following.all()
         posts = Post.objects.filter(author__in=following_users)\
                           .order_by('-created_at')
+        
         page = self.paginate_queryset(posts)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+        
         serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 
